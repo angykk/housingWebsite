@@ -20,7 +20,6 @@ export const Map = () => {
       </GoogleMap>
    </div>
   </div>
-   
   )
 }
 
