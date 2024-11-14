@@ -20,6 +20,7 @@ export default function Home() {
       <APIProvider
         libraries={["places"]}
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+        version="beta"
       >
         <DataProvider>
           <div className="col-span-2 mx-2 lg:col-span-4 lg:mx-5 lg:my-auto px-5 py-5 rounded-lg mt-2 bg-[#D6EFD8] font-bold">

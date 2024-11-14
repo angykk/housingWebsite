@@ -4,18 +4,23 @@ import Searchbar from "@/components/Searchbar";
 import { useData } from "./DataProvider";
 
 export const Apartment = ({}) => {
-  const { setSelectedPlace } = useData();
   const { setCenter } = useData();
+  const { setSelectedPlace } = useData();
 
   const handlePlaceSelected = (place) => {
     if (place.geometry && place.geometry.location) {
       console.log(place);
-      setSelectedPlace({location:{lat:place.geometry.location.lat(),lng:place.geometry.location.lng()}});
+      setSelectedPlace({
+        location: {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        },
+      });
       setCenter({
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
       });
-  }
+    }
   };
 
   return (
@@ -24,6 +29,7 @@ export const Apartment = ({}) => {
         <House01Icon className="mr-2" size={30}></House01Icon>
         <div className="flex-1">
           <Searchbar
+            apartment={true}
             name="Search for apartments"
             onPlaceSelected={handlePlaceSelected}
           />

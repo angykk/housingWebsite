@@ -1,7 +1,13 @@
 import React from "react";
 import { Spots } from "./Spots";
 import { Apartment } from "./Apartment";
-import { VegetarianFoodIcon } from "hugeicons-react";
+import {
+  BookEditIcon,
+  EquipmentGym03Icon,
+  MetroIcon,
+  ShoppingBag02Icon,
+  VegetarianFoodIcon,
+} from "hugeicons-react";
 
 export default function Poi({}) {
   return (
@@ -13,7 +19,49 @@ export default function Poi({}) {
         <Apartment />
       </div>
       <div>
-        <Spots icon={VegetarianFoodIcon} name="Search for grocery stores" />
+        <Spots
+          keyword="grocery stores"
+          icon={VegetarianFoodIcon}
+          name="Search for grocery stores"
+          type="supermarket"
+          index='0'
+        />
+      </div>
+      <div>
+        <Spots
+          keyword="gym"
+          icon={EquipmentGym03Icon}
+          name="Search for gyms"
+          type="gym"
+          index='1'
+         />
+      </div>
+      <div>
+        <Spots
+            keyword="subway"
+            icon={MetroIcon}
+            name="Search for subway stations"
+            type="subway_station"
+            index='2'
+          />
+      </div>
+      <div>
+        <Spots
+          keyword="libraries"
+          icon={BookEditIcon}
+          name="Search for libraries"
+          type="library"
+          index='3'
+        />
+      </div>
+      <div>
+        <Spots
+            keyword="shopping mall"
+            icon={ShoppingBag02Icon}
+            name="Search for malls"
+            type="shopping_mall"
+            index='4'
+          />
       </div>
     </div>
   );

@@ -8,29 +8,82 @@ export function DataProvider({ children }) {
     location: { lat: 43.6532, lng: -79.3832 },
   });
   const [points, setPoints] = useState([]);
+  const [nearByPoints, setNearByPoints] = useState([]);
+  const [whichSearch,setWhichSearch] = useState(null);
 
-  const addPoints = useCallback((place) => {
+  const addPoints = useCallback((place, index) => {
     setPoints((prevPoints) => {
       const isDuplicate = prevPoints.some(
-        (point) => 
+        (point) =>
+        {if (point !== undefined) {
+            point.location.lat === place.location.lat &&
+            point.location.lng === place.location.lng}
+        }
+      );
+  
+      if (!isDuplicate) {
+
+        if (index >= 0) {
+          const updatedPoints = [...prevPoints];
+          updatedPoints[index] = {
+            id: place.id,
+            name: place.name,
+            location: {
+              lat: place.location.lat,
+              lng: place.location.lng,
+            },
+          };
+
+          return updatedPoints;
+        }
+      }
+      return prevPoints;
+    });
+  }, []);
+
+  const removePoint = useCallback((removePlace) => {
+    if (!removePlace) return; 
+    const updatedPoints = setPoints((points) =>
+      points.filter(
+        (element) => 
+        element && (
+            element.location.lat !== removePlace.location.lat ||
+            element.location.lng !== removePlace.location.lng
+        ) 
+      )
+    );
+    console.log(updatedPoints);
+    return updatedPoints;
+  }, []);
+
+  const addNearBy = useCallback((place) => {
+    setNearByPoints((prevNearBy) => {
+      const isDuplicate = prevNearBy.some(
+        (point) =>
           point.location.lat === place.geometry.location.lat() &&
           point.location.lng === place.geometry.location.lng()
       );
       if (!isDuplicate) {
-        return [...prevPoints,
-        {
-          name: place.name,
-          location: { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() },
-        },];
+       
+        return [
+          ...prevNearBy,
+          {
+            name: place.name,
+            location: {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+            },
+            id:place.place_id,
+            rating:place.rating,
+          },
+        ];
       }
-      return prevPoints;
-      });
-}, []);
+      return prevNearBy;
+    });
+  }, []);
 
-  const removePoint = useCallback((removePlace) => {
-    setPoints((points) =>
-      points.filter((place) => place.geometry.location !== removePlace.geometry.location)
-    );
+  const clearNearBy = useCallback(() => {
+    setNearByPoints([]);
   }, []);
 
   return (
@@ -43,6 +96,12 @@ export function DataProvider({ children }) {
         points,
         addPoints,
         removePoint,
+        nearByPoints,
+        setNearByPoints,
+        addNearBy,
+        clearNearBy,
+        whichSearch,
+        setWhichSearch,
       }}
     >
       {children}
