@@ -25,7 +25,7 @@ export const Apartment = ({}) => {
 
   return (
     <div>
-      <div className="flex flex-row items-center font-normal mt-5 rounded-lg px-2 py-2 bg-white w-full">
+      <div className="flex flex-row items-center font-normal my-5 rounded-lg px-2 py-2 bg-white w-full">
         <House01Icon className="mr-2" size={30}></House01Icon>
         <div className="flex-1">
           <Searchbar

@@ -37,7 +37,6 @@ export default function MapComponent({}) {
   };
 
   const handleMarkerClick = (element, index) => {
-    console.log(element);
     async function getPlaceDetails() {
       const { Place } = await google.maps.importLibrary("places");
 
@@ -57,10 +56,6 @@ export default function MapComponent({}) {
       const openingHours = place.regularOpeningHours;
       const today = new Date().getDay();
       const isOpen247 = openingHours?.weekdayDescriptions[today].includes("24");
-
-      console.log(openingHours);
-      console.log(openingHours?.weekdayDescriptions[today]);
-      console.log(isOpen247);
 
       setPlaceDetails({
         displayName: place.displayName,
@@ -158,7 +153,7 @@ export default function MapComponent({}) {
                       ) : (
                         <p>Opening Hours: {getTodayOpeningHours()}</p>
                       )}
-                      {placeDetails?.rating && <>{element.rating} stars</>}
+                      <>{placeDetails?.rating} stars</>
                     </h1>
                   </InfoWindow>
                 )}
@@ -206,7 +201,7 @@ export default function MapComponent({}) {
                       ) : (
                         <p>Opening Hours: {getTodayOpeningHours()}</p>
                       )}
-                      {element.rating} stars
+                      {placeDetails?.rating} stars
                     </h1>
                   </InfoWindow>
                 )}

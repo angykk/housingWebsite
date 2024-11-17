@@ -11,8 +11,8 @@ export default function SearchBar({
   type,
   index,
 }) {
-  const { center,points, removePoint } = useData();
-  const { addNearBy, clearNearBy} = useData();
+  const { center, points, removePoint } = useData();
+  const { addNearBy, clearNearBy } = useData();
   const { whichSearch, setWhichSearch } = useData();
 
   const [placeAutocomplete, setPlaceAutocomplete] = useState(null);
@@ -23,11 +23,14 @@ export default function SearchBar({
   const places = useMapsLibrary("places");
 
   const handleClearSelection = () => {
-    removePoint(points[index]);
-    console.log(points[index]);
+    console.log("Clearing selection for index:", index);
+    console.log("Current points:", points);
+    console.log("Point to remove:", points[index]);
+
     setPlaceInput(false);
     inputRef.current.value = "";
     setDisabled(false);
+    removePoint(points[index]);
   };
 
   useEffect(() => {
@@ -58,17 +61,16 @@ export default function SearchBar({
       function callback(results, status) {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
           clearNearBy();
-            results.forEach((result) => addNearBy(result));
-          } else {
-            console.log("No results found");
-          
+          results.forEach((result) => addNearBy(result));
+        } else {
+          console.log("No results found");
         }
       }
       async function nearBy() {
         const request = {
           fields: ["geometry", "name", "formatted_address", "place_id"],
           location: center,
-          radius: 5000,
+          radius: 10000,
           type: type,
         };
         const service = new google.maps.places.PlacesService(
@@ -79,21 +81,19 @@ export default function SearchBar({
       if (places && center) {
         nearBy();
       }
-      
     }
     setWhichSearch(index);
   }, [center, isFocused, type, addNearBy, clearNearBy, index]);
 
-  useEffect(()=>{
-    if(points[whichSearch] !== undefined && whichSearch === index){
+  useEffect(() => {
+    if (points[whichSearch] !== undefined && whichSearch === index) {
       console.log(points[whichSearch]);
       console.log(points[whichSearch].name);
       inputRef.current.value = points[whichSearch].name;
       setPlaceInput(true);
       setDisabled(true);
     }
-    
-  },[points, whichSearch]);
+  }, [points, whichSearch]);
 
   return (
     <div className="flex w-full">
@@ -104,7 +104,7 @@ export default function SearchBar({
         readOnly={placeInput && !apartment}
         placeholder={name}
         onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)} 
+        onBlur={() => setIsFocused(false)}
         disabled={disabled}
         style={{
           boxSizing: "border-box",

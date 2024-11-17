@@ -9,20 +9,18 @@ export function DataProvider({ children }) {
   });
   const [points, setPoints] = useState([]);
   const [nearByPoints, setNearByPoints] = useState([]);
-  const [whichSearch,setWhichSearch] = useState(null);
+  const [whichSearch, setWhichSearch] = useState(null);
 
   const addPoints = useCallback((place, index) => {
     setPoints((prevPoints) => {
-      const isDuplicate = prevPoints.some(
-        (point) =>
-        {if (point !== undefined) {
-            point.location.lat === place.location.lat &&
-            point.location.lng === place.location.lng}
+      const isDuplicate = prevPoints.some((point) => {
+        if (point !== undefined) {
+          point.location.lat === place.location.lat &&
+            point.location.lng === place.location.lng;
         }
-      );
-  
-      if (!isDuplicate) {
+      });
 
+      if (!isDuplicate) {
         if (index >= 0) {
           const updatedPoints = [...prevPoints];
           updatedPoints[index] = {
@@ -42,18 +40,22 @@ export function DataProvider({ children }) {
   }, []);
 
   const removePoint = useCallback((removePlace) => {
-    if (!removePlace) return; 
-    const updatedPoints = setPoints((points) =>
-      points.filter(
-        (element) => 
-        element && (
-            element.location.lat !== removePlace.location.lat ||
-            element.location.lng !== removePlace.location.lng
-        ) 
-      )
-    );
-    console.log(updatedPoints);
-    return updatedPoints;
+    if (!removePlace) return;
+    setPoints((prevPoints) => {
+      const updatedPoints = [...prevPoints];
+      prevPoints.map((point, index) => {
+        if (!point) return;
+        const isSameLocation =
+          Math.abs(point.location.lat - removePlace.location.lat) < 0.00001 &&
+          Math.abs(point.location.lng - removePlace.location.lng) < 0.00001;
+        if (isSameLocation) {
+          updatedPoints[index] = undefined;
+        }
+      });
+
+      console.log(updatedPoints);
+      return updatedPoints;
+    });
   }, []);
 
   const addNearBy = useCallback((place) => {
@@ -64,7 +66,6 @@ export function DataProvider({ children }) {
           point.location.lng === place.geometry.location.lng()
       );
       if (!isDuplicate) {
-       
         return [
           ...prevNearBy,
           {
@@ -73,8 +74,8 @@ export function DataProvider({ children }) {
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng(),
             },
-            id:place.place_id,
-            rating:place.rating,
+            id: place.place_id,
+            rating: place.rating,
           },
         ];
       }
