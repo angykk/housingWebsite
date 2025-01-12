@@ -9,7 +9,7 @@ import {
 import { useState } from "react";
 import { useRef } from "react";
 
-export default function MapComponent({}) {
+export default function MapComponent({ }) {
   const {
     center,
     selectedPlace,
@@ -20,8 +20,8 @@ export default function MapComponent({}) {
     whichSearch,
   } = useData();
 
+  const [selectedMarker, setSelectedMarker] = useState({ type: null, index: null });
   const [infoWindowOpen, setInfoWindowOpen] = useState(false);
-  const [selectedMarkerIndex, setSelectedMarkerIndex] = useState(null);
   const [lastClickTime, setLastClickTime] = useState(0);
   const [lastClicked, setLastClicked] = useState(-1);
 
@@ -34,11 +34,16 @@ export default function MapComponent({}) {
     console.log(element);
     addPoints(element, whichSearch);
     setInfoWindowOpen(false);
-    setSelectedMarkerIndex(null);
     clearNearBy();
   };
 
-  const handleMarkerClick = (element, index) => {
+  const handleMarkerClick = (element, index, markerType) => {
+    const currentTime = Date.now();
+
+    if (currentTime - lastClickTime < 4000 && index === lastClicked) {
+      handleDoubleClick(element, index);
+      return;
+    }
     async function getPlaceDetails() {
       const { Place } = await google.maps.importLibrary("places");
 
@@ -54,7 +59,7 @@ export default function MapComponent({}) {
           "rating",
         ],
       });
-      
+
       const openingHours = place.regularOpeningHours;
       const today = new Date().getDay();
       const isOpen247 = openingHours?.weekdayDescriptions[today].includes("24");
@@ -69,16 +74,10 @@ export default function MapComponent({}) {
       });
       console.log(placeDetails);
     }
-    const currentTime = Date.now();
 
     getPlaceDetails();
-    setSelectedMarkerIndex(index);
-
-    if (currentTime - lastClickTime < 4000 && index === lastClicked) {
-      handleDoubleClick(element, index); 
-    } else {
-      setInfoWindowOpen(true);
-    }
+    setSelectedMarker({ type: markerType, index: index });
+    setInfoWindowOpen(true);
     setLastClickTime(currentTime);
     setLastClicked(index);
   };
@@ -90,9 +89,9 @@ export default function MapComponent({}) {
     const todayHours = placeDetails.regularOpeningHours.weekdayDescriptions[todayIndex];
 
     const openingTime = (todayHours) => {
-      const colonIndex = todayHours.indexOf(':'); 
-      
-      return todayHours.substring(colonIndex + 1).trim(); 
+      const colonIndex = todayHours.indexOf(':');
+
+      return todayHours.substring(colonIndex + 1).trim();
     };
 
     return todayHours
@@ -128,7 +127,7 @@ export default function MapComponent({}) {
                       markerRefs.current[index] = el;
                     }
                   }}
-                  onClick={() => handleMarkerClick(element, index)}
+                  onClick={() => handleMarkerClick(element, index, 'nearby')}
                   position={{
                     lat: element.location.lat,
                     lng: element.location.lng,
@@ -140,7 +139,9 @@ export default function MapComponent({}) {
                     glyphColor={"#0f677a"}
                   ></Pin>
                 </AdvancedMarker>
-                {infoWindowOpen && selectedMarkerIndex === index && (
+                {infoWindowOpen && 
+                  selectedMarker.type === 'nearby' && 
+                  selectedMarker.index === index && (
                   <InfoWindow
                     anchor={markerRefs.current[index]}
                     maxWidth={200}
@@ -173,10 +174,10 @@ export default function MapComponent({}) {
                   ref={(el) => {
                     if (el) {
                       markerRefsPoints.current[index] = el;
-                    
+
                     }
                   }}
-                  onClick={() => handleMarkerClick(element, index)}
+                  onClick={() => handleMarkerClick(element, index, 'points')}
                   position={{
                     lat: element.location.lat,
                     lng: element.location.lng,
@@ -188,7 +189,9 @@ export default function MapComponent({}) {
                     glyphColor={"#0f677a"}
                   ></Pin>
                 </AdvancedMarker>
-                {infoWindowOpen && selectedMarkerIndex === index && (
+                {infoWindowOpen && 
+                  selectedMarker.type === 'points' && 
+                  selectedMarker.index === index && (
                   <InfoWindow
                     anchor={markerRefsPoints.current[index]}
                     maxWidth={200}
