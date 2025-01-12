@@ -10,7 +10,6 @@ export function DataProvider({ children }) {
   const [points, setPoints] = useState([]);
   const [nearByPoints, setNearByPoints] = useState([]);
   const [whichSearch, setWhichSearch] = useState(null);
-  const [setInfoWindowOpen, setSetInfoWindowOpen] = useState(false);
 
   const addPoints = useCallback((place, index) => {
     setPoints((prevPoints) => {
